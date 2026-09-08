@@ -40,30 +40,38 @@
         /* HEADER - BLACK BACKGROUND FOR WHITE LOGO */
         header { 
             background-color: #000000;
-            padding: 32px 16px 24px; 
-            text-align: center; 
-            border-bottom: 4px solid var(--border-light);
+            padding: 24px 20px; 
+            border-bottom: 4px solid var(--border-heavy);
         }
         
         .header-container { 
             max-width: 1000px; 
             margin: 0 auto; 
             display: flex; 
-            flex-direction: column; 
+            flex-direction: row; 
             align-items: center; 
-            gap: 16px; 
+            justify-content: flex-start;
+            gap: 24px; 
         }
 
         .brand-logo-img { 
-            height: 80px; 
+            height: 140px; 
             width: auto; 
             object-fit: contain; 
             display: block; 
+            flex-shrink: 0;
+        }
+
+        .header-text-container {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            text-align: left;
         }
 
         h1 { 
             font-family: var(--font-heading); 
-            font-size: 36px; 
+            font-size: 42px; 
             font-weight: 700; 
             text-transform: uppercase; 
             letter-spacing: 2px; 
@@ -298,6 +306,21 @@
 
         /* RESPONSIVE STACKING FOR MOBILE */
         @media (max-width: 768px) {
+            .header-container {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+            .header-text-container {
+                align-items: center;
+                text-align: center;
+            }
+            .brand-logo-img {
+                height: 100px;
+            }
+            h1 {
+                font-size: 32px;
+            }
             .table-header { display: none; }
             .table-row {
                 grid-template-columns: 1fr;
@@ -346,8 +369,10 @@
     <header>
         <div class="header-container">
             <img src="STAMPS NLCP Logo wb.png" alt="NLC Performance Logo" class="brand-logo-img">
-            <h1>FUNCTION TIER <span>PROGRAMME</span></h1>
-            <div class="motto-bar">NLC PERFORMANCE // TACTICAL READINESS SYSTEM</div>
+            <div class="header-text-container">
+                <h1>FUNCTION TIER <span>PROGRAMME</span></h1>
+                <div class="motto-bar">NLC PERFORMANCE // TACTICAL READINESS SYSTEM</div>
+            </div>
         </div>
     </header>
 
