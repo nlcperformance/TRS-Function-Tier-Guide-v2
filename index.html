@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NLC Performance // Function Tier Blueprint</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700;800&family=Oswald:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-page: #F9FAFB;
+            --bg-card: #FFFFFF;
+            --text-main: #000000;
+            --text-muted: #4B5563;
+            --border-heavy: #000000;
+            --border-light: #E5E7EB;
+            --bg-dose: #F3F4F6;
+            
+            --font-heading: 'Oswald', sans-serif;
+            --font-body: 'Inter', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+        }
+
+        * { 
+            box-sizing: border-box; 
+            margin: 0; 
+            padding: 0; 
+        }
+
+        body {
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            font-family: var(--font-body);
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+            padding-bottom: 60px;
+        }
+
+        /* HEADER - BLACK BACKGROUND FOR WHITE LOGO */
+        header { 
+            background-color: #000000;
+            padding: 32px 16px 24px; 
+            text-align: center; 
+            border-bottom: 4px solid var(--border-light);
+        }
+        
+        .header-container { 
+            max-width: 1000px; 
+            margin: 0 auto; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            gap: 16px; 
+        }
+
+        .brand-logo-img { 
+            height: 80px; 
+            width: auto; 
+            object-fit: contain; 
+            display: block; 
+        }
+
+        h1 { 
+            font-family: var(--font-heading); 
+            font-size: 36px; 
+            font-weight: 700; 
+            text-transform: uppercase; 
+            letter-spacing: 2px; 
+            color: #FFFFFF; 
+            line-height: 1.1; 
+        }
+
+        .motto-bar { 
+            font-family: var(--font-mono); 
+            font-size: 11px; 
+            letter-spacing: 4px; 
+            color: #9CA3AF; 
+            text-transform: uppercase; 
+            margin-top: 4px; 
+        }
+
+        /* NAVIGATION TABS */
+        .nav-container {
+            position: sticky; 
+            top: 0; 
+            z-index: 100;
+            background: rgba(255, 255, 255, 0.95); 
+            backdrop-filter: blur(10px);
+            border-bottom: 2px solid var(--border-heavy);
+            padding: 16px 16px 0; 
+        }
+
+        .nav-tabs { 
+            max-width: 1000px; 
+            margin: 0 auto; 
+            display: flex; 
+            gap: 24px; 
+            overflow-x: auto; 
+            scrollbar-width: none; 
+        }
+
+        .nav-tabs::-webkit-scrollbar { display: none; }
+
+        .tab-btn { 
+            background: transparent; 
+            border: none; 
+            color: var(--text-muted); 
+            padding: 0 0 12px 0; 
+            font-family: var(--font-heading); 
+            font-size: 16px; 
+            cursor: pointer; 
+            white-space: nowrap; 
+            transition: all 0.2s ease; 
+            text-transform: uppercase; 
+            letter-spacing: 1px; 
+            position: relative; 
+        }
+
+        .tab-btn::after { 
+            content: ''; 
+            position: absolute; 
+            bottom: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 4px; 
+            background-color: transparent; 
+            transition: background-color 0.2s ease; 
+        }
+
+        .tab-btn:hover { color: var(--text-main); }
+
+        .tab-btn.active { 
+            color: var(--text-main); 
+            font-weight: 700; 
+        }
+
+        .tab-btn.active::after { 
+            background-color: var(--border-heavy); 
+        }
+
+        .print-btn { 
+            margin-left: auto; 
+            color: var(--text-main);
+            font-weight: 700;
+        }
+
+        /* MAIN CONTENT */
+        main { 
+            max-width: 1000px; 
+            margin: 40px auto; 
+            padding: 0 16px; 
+        }
+
+        .tab-content { display: none; animation: fadeIn 0.3s ease; }
+        .tab-content.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* SESSION TITLE */
+        .session-header { 
+            margin-bottom: 32px; 
+            border-left: 6px solid var(--border-heavy);
+            padding-left: 16px;
+        }
+
+        .session-tag { 
+            font-family: var(--font-mono); 
+            font-size: 12px; 
+            font-weight: 700;
+            letter-spacing: 2px; 
+            color: var(--text-muted); 
+            text-transform: uppercase; 
+            margin-bottom: 4px; 
+        }
+
+        .session-title { 
+            font-family: var(--font-heading); 
+            font-size: 32px; 
+            color: var(--text-main); 
+            text-transform: uppercase; 
+            letter-spacing: 1px; 
+        }
+
+        /* EXERCISE BLOCKS & TABLES */
+        .block-section { 
+            margin-bottom: 48px; 
+            background: var(--bg-card);
+            border: 2px solid var(--border-heavy);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+
+        .block-header { 
+            background: #F9FAFB;
+            padding: 16px 20px;
+            border-bottom: 2px solid var(--border-heavy);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .block-title {
+            font-family: var(--font-heading); 
+            font-size: 20px; 
+            text-transform: uppercase; 
+            letter-spacing: 1px; 
+            color: var(--text-main); 
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .table-header {
+            display: grid;
+            grid-template-columns: 2.5fr 1.5fr 3fr;
+            padding: 12px 20px;
+            border-bottom: 1px solid var(--border-light);
+            font-family: var(--font-body);
+            font-weight: 700;
+            font-size: 11px;
+            color: #6B7280;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .table-row {
+            display: grid;
+            grid-template-columns: 2.5fr 1.5fr 3fr;
+            padding: 20px;
+            border-bottom: 1px solid var(--border-light);
+            align-items: center;
+            gap: 20px;
+        }
+
+        .table-row:last-child { 
+            border-bottom: none; 
+        }
+
+        .table-row:hover {
+            background-color: #F9FAFB;
+        }
+
+        .row-name { 
+            font-weight: 700; 
+            font-size: 16px; 
+            font-family: var(--font-heading); 
+            text-transform: uppercase; 
+            color: var(--text-main);
+        }
+
+        .row-dose-container {
+            display: flex;
+            justify-content: flex-start;
+        }
+
+        .row-dose { 
+            font-family: var(--font-mono); 
+            font-size: 14px; 
+            font-weight: 700; 
+            background: var(--bg-dose); 
+            padding: 8px 16px; 
+            border-radius: 6px; 
+            text-align: center; 
+            border: 1px solid var(--border-light); 
+            color: var(--text-main);
+            display: inline-block;
+        }
+
+        .row-cue { 
+            font-size: 14px; 
+            color: var(--text-muted); 
+            font-weight: 500;
+            line-height: 1.4;
+        }
+
+        /* MASTER TIMER BUTTON */
+        .timer-btn {
+            background: var(--border-heavy);
+            color: #FFFFFF;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-family: var(--font-heading);
+            font-size: 14px;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .timer-btn:hover {
+            background: #333333;
+            transform: translateY(-1px);
+        }
+
+        /* RESPONSIVE STACKING FOR MOBILE */
+        @media (max-width: 768px) {
+            .table-header { display: none; }
+            .table-row {
+                grid-template-columns: 1fr;
+                gap: 12px;
+                padding: 16px;
+            }
+            .row-dose-container { justify-content: flex-start; }
+            .row-cue::before {
+                content: 'CUE: ';
+                font-family: var(--font-mono);
+                font-size: 10px;
+                font-weight: 700;
+                color: #9CA3AF;
+                display: block;
+                margin-bottom: 2px;
+            }
+        }
+
+        footer { 
+            max-width: 1000px; 
+            margin: 40px auto 0; 
+            padding: 24px 16px; 
+            text-align: center; 
+            border-top: 2px solid var(--border-light); 
+            font-family: var(--font-mono); 
+            font-size: 11px; 
+            letter-spacing: 1px; 
+            color: var(--text-muted); 
+            text-transform: uppercase; 
+        }
+
+        @media print {
+            body { background-color: #FFF !important; color: #000 !important; }
+            header, .nav-container, .timer-btn, footer { display: none !important; }
+            .tab-content { display: block !important; page-break-after: always; }
+            .session-header { border-left-color: #000 !important; margin-top: 0; }
+            .block-section { box-shadow: none !important; border: 2px solid #000 !important; page-break-inside: avoid; }
+            .block-header { background: #EEE !important; border-bottom: 2px solid #000 !important; }
+            .table-row { border-bottom: 1px solid #CCC !important; }
+            .row-dose { border: 1px solid #000 !important; background: #FFF !important; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-container">
+            <img src="nlcpWHITE.png" alt="NLC Performance Logo" class="brand-logo-img" onerror="this.onerror=null; this.src='nlcpWHITE.jpg';">
+            <h1>FUNCTION TIER <span>PROGRAMME</span></h1>
+            <div class="motto-bar">NLC PERFORMANCE // TACTICAL READINESS SYSTEM</div>
+        </div>
+    </header>
+
+    <div class="nav-container">
+        <div class="nav-tabs">
+            <button class="tab-btn active" onclick="switchTab('session-a')">Session A</button>
+            <button class="tab-btn" onclick="switchTab('session-b')">Session B</button>
+            <button class="tab-btn" onclick="switchTab('session-c')">Session C</button>
+            <button class="tab-btn" onclick="switchTab('autoreg')">CO2 Rules</button>
+            <button class="tab-btn" onclick="switchTab('habits')">Daily Protocol</button>
+            <button class="tab-btn print-btn" onclick="window.print()">🖨️ Print PDF</button>
+        </div>
+    </div>
+
+    <main>
+        <!-- ==================== SESSION A ==================== -->
+        <div id="session-a" class="tab-content active">
+            <div class="session-header">
+                <div class="session-tag">Microcycle Block // Session A</div>
+                <div class="session-title">Linear & Eccentric Load</div>
+            </div>
+
+            <!-- BLOCK 1: NEURO SWITCH -->
+            <div class="block-section">
+                <div class="block-header">
+                    <h2 class="block-title">🧠 Block 1: Neurological Switch</h2>
+                </div>
+                <div class="table-header">
+                    <div>Exercise</div>
+                    <div>Dose</div>
+                    <div>Execution Cue</div>
+                </div>
+                <div class="table-row">
+                    <div class="row-name">[CNS] RPR Wake Up Drill</div>
+                    <div class="row-dose-container"><div class="row-dose">1 Flow (1-3m)</div></div>
+                    <div class="row-cue">Vigorously rub jawline/ribs and belly button radius.</div>
+                </div>
+                <div class="table-row">
+                    <div class="row-name">[Lower Leg] 3-Way Ankle Pogos</div>
+                    <div class="row-dose-container"><div class="row-dose">15s (5s/Pos)</div></div>
+                    <div class="row-cue">Stiff knees, bounce off the balls of the feet. Minimal ground contact.</div>
+                </div>
+            </div>
+
+            <!-- BLOCK 2: ISOMETRICS -->
+            <div class="block-section">
+                <div class="block-header">
+                    <h2 class="block-title">🧱 Block 2: Structural Isometrics</h2>
+                </div>
+                <div class="table-header">
+                    <div>Exercise</div>
+                    <div>Dose</div>
+                    <div>Execution Cue</div>
+                </div>
+                <div class="table-row">
+                    <div class="row-name">[Pecs & Core] Isometric Push-Up</div>
+                    <div class="row-dose-container"><div class="row-dose">1 x 60s</div></div>
+                    <div class="row-cue">Hover chest 2" off floor. Actively "pull" hands together.</div>
+                </div>
+                <div class="table-row">
+                    <div class="row-name">[Quads] Isometric Split Squat</div>
+                    <div class="row-dose-container"><div class="row-dose">1 x 60s / Leg</div></div>
+                    <div class="row-cue">Back knee 2" off floor. Torso vertical. Smooth force ramp up.</div>
+                </div>
+                <div class="table-row">
+                    <div class="row-name">[Achilles] Spring Ankle Hold</div>
+                    <div class="row-dose-container"><div class="row-dose">1 x 60s / Leg</div></div>
+                    <div class="row-cue">Barefoot. Drive ball of foot down, raise heel 1". Knee locked.</div>
+                </div>
+            </div>
+
+            <!-- BLOCK 3: BALLISTICS -->
+            <div class="block-section">
+                <div class="block-header">
+                    <h2 class="block-title">⚡ Block 3: Ballistics (Superset)</h2>
+                </div>
+                <div class="table-header">
+                    <div>Exercise</div>
+                    <div>Dose</div>
+                    <div>Execution Cue</div>
+                </div>
+                <div class="table-row">
+                    <div class="row-name">1A. [Lower Chain] 6" Depth Drop</div>
+                    <div class="row-dose-container"><div class="row-dose">4 x 10</div></div>
+                    <div class="row-cue">Step off box. Silent landing. Freeze completely for 2s.</div>
+                </div>
+                <div class="table-row">
+                    <div class="row-name">1B. [Neck] Iso Hold (Front & Back)</div>
+                    <div class="row-dose-container"><div class="row-dose">4 x 30s</div></div>
+                    <div class="row-cue">Press head into hands. Maintain a rigid, neutral spine.</div>
+                </div>
+            </div>
+
+            <!-- BLOCK 4: CONCENTRICS -->
+            <div class="block-section">
+                <div class="block-header">
+                    <h2 class="block-title">🏗️ Block 4: Strength Concentrics</h2>
+                </div>
+                <div class="table-header">
+                    <div>Exercise</div>
+                    <div>Dose</div>
+                    <div>Execution Cue</div>
+                </div>
+                <div class="table-row">
+                    <div class="row-name">2A. [Upper Pull] Pull-Ups</div>
+                    <div class="row-dose-container"><div class="row-dose">1-3 x 2 Reps</div></div>
+                    <div class="row-cue">Dead hang start. Drive elbows straight down. No swinging.</div>
+                </div>
+                <div class="table-row">
+                    <div class="row-name">2B. [Shin] Deficit Tibialis Raise</div>
+                    <div class="row-dose-container"><div class="row-dose">1-3 x 10 Reps</div></div>
+                    <div class="row-cue">Heels on edge. Lower toes into deep stretch, flex straight up.</div>
+                </div>
+            </div>
+
+            <!-- BLOCK 5: ENGINE -->
+            <div class="block-section">
+                <div class="block-header">
+                    <h2 class="block-title">⏱️ Block 5: StrongFirst Engine</h2>
+                    <a href="https://nlcperformance.github.io/TRS-Master-Timer/" target="_blank" class="timer-btn">Launch Master Timer ➔</a>
+                </div>
+                <div class="table-header">
+                    <div>Protocol</div>
+                    <div>Dose</div>
+                    <div>Execution Cue</div>
+                </div>
+                <div class="table-row">
+                    <div class="row-name">Quick & The Dead (Q&D)</div>
+                    <div class="row-dose-container"><div class="row-dose">2-4 Series</div></div>
+                    <div class="row-cue">10s Max Work / 50s Nasal Rest. Terminate immediately if speed drops.</div>
+                </div>
+            </div>
+
+            <!-- BLOCK 6: RESET -->
+            <div class="block-section">
+                <div class="block-header">
+                    <h2 class="block-title">🫁 Block 6: Vagal Reset</h2>
+                </div>
+                <div class="table-header">
+                    <div>Exercise</div>
+                    <div>Dose</div>
+                    <div>Execution Cue</div>
+                </div>
+                <div class="table-row">
+                    <div class="row-name">[CNS] Decompression Hang</div>
+                    <div class="row-dose-container"><div class="row-dose">1 Min / Arm</div></div>
+                    <div class="row-cue">Passive single-arm hang. Feet remain touching the floor.</div>
+                </div>
+                <div class="table-row">
+                    <div class="row-name">[CNS] 1:4:2 Nasal Breathing</div>
+                    <div class="row-dose-container"><div class="row-dose">3 Mins</div></div>
+                    <div class="row-cue">Inhale 4s, Hold 16s, Exhale 8s. Strict nasal only.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SESSION B ==================== -->
+        <div id="session-b" class="tab-content">
+            <div class="session-header">
+                <div class="session-tag">Microcycle Block // Session B</div>
+                <div class="session-title">Rotational Chaos & Fluid Inertia</div>
+            </div>
+
+            <!-- BLOCK 1: NEURO SWITCH -->
+            <div class="block-section">
+                <div class="block-header">
+                    <h2 class="block-title">🧠 Block 1: Neurological Switch</h2>
+                </div>
+                <div class="table-header">
+                    <div>Exercise</div>
+                    <div>Dose</div>
+                    <div>Execution Cue</div>
+                </div>
+                <div class="table-row">
+                    <div class="row-name">[CNS] RPR Wake Up Drill</div>
+                    <div class="row-dose-container"><div class="row-dose">1 Flow (1-3m)</div></div>
+                    <div class="row-cue">Vigorously rub jawline/ribs and belly button radius.</div>
+                </div>
+                <div class="table-row">
+                    <div class="row-name">[Lower Leg] 3-Way Ankle Pogos</div>
+                    <div class="row-dose-container"><div class="row-dose">15s (5s/Pos)</div></div>
+                    <div class="row-cue">Stiff knees, bounce off the balls of the feet. Minimal ground contact.</div>
+                </div>
+            </div>
+
+            <!-- BLOCK 2: ISOMETRICS -->
+            <div class="block-section">
+                <div class="block-header">
+                    <h2 class="block-title">🧱 Block 2: Structural Isometrics</h2>
+                </div>
+                <div class="table-header">
+                    <div>Exercise</div>
+                    <div>Dose</div>
+                    <div>Execution Cue</div>
+                </div>
+                <div class="table-row">
+                    <div class="row-name">[Pecs & Core] Isometric Push-Up</div>
+                    <div class="row-dose-container"><div class="row-dose">1 x 60s</div></div>
+                    <div class="row-cue">Hover chest 2" off floor. Actively "pull" hands together.</div>
+                </div>
+                <div class="table-row">
+                    <div class="row-name">[Quads] Isometric Split Squat</div>
+                    <div class="row-dose-container"><div class="row-dose">1 x 60s / Leg</div></div>
+                    <div class="row-cue">Back knee 2" off floor. Torso vertical. Smooth force ramp up.</div>
+                </div>
+                <div class="table-row">
+                    <div class="row-name">[Achilles] Spring Ankle Hold</div>
+                    <div class="row-dose-container"><div class="row-dose">1 x 60s / Leg</div></div>
+                    <div class="row-cue">Barefoot. Drive ball of foot down, raise heel 1". Knee locked.</div>
+                </div>
+            </div>
+
+            <!-- BLOCK 3: BALLISTICS -->
+            <div class="block-section">
+                <div class="block-header">
+                    <h2 class="block-title">⚡ Block 3: Rotational Ballistics</h2>
+                </div>
+                <div class="table-header">
+                    <div>Exercise</div>
+                    <div>Dose</div>
+                    <div>Execution Cue</div>
+                </div>
+                <div class="table-row">
+                    <div class="row-name">Med Ball Cross Body Throw</div>
+                    <div class="row-dose-container"><div class="row-dose">4 x 10 / Side</div></div>
+                    <div class="row-cue">Stand sideways. Load back hip, violently rotate and slam ball.</div>
+                </div>
+            </div>
+
+            <!-- BLOCK 4: ENGINE -->
+            <div class="block-section">
+                <div class="block-header">
+                    <h2 class="block-title">⏱️ Block 4: StrongFirst Engine</h2>
+                    <a href="https://nlcperformance.github.io/TRS-Master-Timer/" target="_blank" class="timer-btn">Launch Master Timer ➔</a>
+                </div>
+                <div class="table-header">
+                    <div>Protocol</div>
+                    <div>Dose</div>
+                    <div>Execution Cue</div>
+                </div>
+                <div class="table-row">
+                    <div class="row-name">Kettlebell AXE Protocol</div>
+                    <div class="row-dose-container"><div class="row-dose">10-30 Mins</div></div>
+                    <div class="row-cue">EMOM Format. 4-6 Reps in under 8s. Rest remainder. Abort if speed drops.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SESSION C ==================== -->
+        <div id="session-c" class="tab-content">
+            <div class="session-header">
+                <div class="session-tag">Microcycle Block // Session C</div>
+                <div class="session-title">Armor & Kinetic Skill</div>
+            </div>
+
+            <!-- BLOCK 1: NEURO SWITCH -->
+            <div class="block-section">
+                <div class="block-header">
+                    <h2 class="block-title">🧠 Block 1: Neurological Switch</h2>
+                </div>
+                <div class="table-header">
+                    <div>Exercise</div>
+                    <div>Dose</div>
+                    <div>Execution Cue</div>
+                </div>
+                <div class="table-row">
+                    <div class="row-name">[CNS] RPR Wake Up Drill</div>
+                    <div class="row-dose-container"><div class="row-dose">1 Flow (1-3m)</div></div>
+                    <div class="row-cue">Vigorously rub jawline/ribs and belly button radius.</div>
+                </div>
+                <div class="table-row">
+                    <div class="row-name">[Lower Leg] 3-Way Ankle Pogos</div>
+                    <div class="row-dose-container"><div class="row-dose">15s (5s/Pos)</div></div>
+                    <div class="row-cue">Stiff knees, bounce off the balls of the feet. Minimal ground contact.</div>
+                </div>
+            </div>
+
+            <!-- BLOCK 2: ISOMETRICS -->
+            <div class="block-section">
+                <div class="block-header">
+                    <h2 class="block-title">🧱 Block 2: Kinetic Armor Isometrics</h2>
+                </div>
+                <div class="table-header">
+                    <div>Exercise</div>
+                    <div>Dose</div>
+                    <div>Execution Cue</div>
+                </div>
+                <div class="table-row">
+                    <div class="row-name">[Pecs & Core] Isometric Push-Up</div>
+                    <div class="row-dose-container"><div class="row-dose">1 x 60s</div></div>
+                    <div class="row-cue">Hover chest 2" off floor. Actively "pull" hands together.</div>
+                </div>
+                <div class="table-row">
+                    <div class="row-name">[Glutes] Glute Bridge Hold</div>
+                    <div class="row-dose-container"><div class="row-dose">1 x 60s</div></div>
+                    <div class="row-cue">Dig heels into floor, drive big toes down, full hip extension.</div>
+                </div>
+            </div>
+
+            <!-- BLOCK 3: ENGINE -->
+            <div class="block-section">
+                <div class="block-header">
+                    <h2 class="block-title">⏱️ Block 3: StrongFirst Engine</h2>
+                    <a href="https://nlcperformance.github.io/TRS-Master-Timer/" target="_blank" class="timer-btn">Launch Master Timer ➔</a>
+                </div>
+                <div class="table-header">
+                    <div>Protocol</div>
+                    <div>Dose</div>
+                    <div>Execution Cue</div>
+                </div>
+                <div class="table-row">
+                    <div class="row-name">Dry Fighting Weight (DFW)</div>
+                    <div class="row-dose-container"><div class="row-dose">20-30 Mins</div></div>
+                    <div class="row-cue">Ladders (1, 2, 3 reps). Step up to the bell ONLY when nasal breathing is fully recovered.</div>
+                </div>
+            </div>
+
+            <!-- BLOCK 4: FINISHER -->
+            <div class="block-section">
+                <div class="block-header">
+                    <h2 class="block-title">🛡️ Block 4: QL Shield Finisher</h2>
+                </div>
+                <div class="table-header">
+                    <div>Exercise</div>
+                    <div>Dose</div>
+                    <div>Execution Cue</div>
+                </div>
+                <div class="table-row">
+                    <div class="row-name">[Core] Single-Arm Suitcase Carry</div>
+                    <div class="row-dose-container"><div class="row-dose">3 x 40m / Side</div></div>
+                    <div class="row-cue">Walk tall. Maintain perfect posture with zero side-leaning.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== CO2 GUIDELINES ==================== -->
+        <div id="autoreg" class="tab-content">
+            <div class="session-header">
+                <div class="session-tag">Autonomic Diagnostics</div>
+                <div class="session-title">CO2 Tolerance Rules</div>
+            </div>
+
+            <div class="block-section">
+                <div class="block-header">
+                    <h2 class="block-title">📊 Morning Assessment Protocol</h2>
+                </div>
+                <div class="table-header">
+                    <div>CO2 Score Status</div>
+                    <div>Concentric Volume Dose</div>
+                    <div>Actionable Directive</div>
+                </div>
+                <div class="table-row">
+                    <div class="row-name" style="color: #000;">15+ Sec Below Baseline</div>
+                    <div class="row-dose-container"><div class="row-dose" style="border-color:#000;">SKIP LIFT</div></div>
+                    <div class="row-cue">No heavy lifting. Execute 100% RPR resets, nasal walks, and breathing.</div>
+                </div>
+                <div class="table-row">
+                    <div class="row-name" style="color: #444;">Slightly Below Baseline</div>
+                    <div class="row-dose-container"><div class="row-dose">1 SET ONLY</div></div>
+                    <div class="row-cue">You are surviving today. Stimulate tissue, cap volume early, and exit.</div>
+                </div>
+                <div class="table-row">
+                    <div class="row-name" style="color: #000;">At Baseline Average</div>
+                    <div class="row-dose-container"><div class="row-dose">2 SETS</div></div>
+                    <div class="row-cue">Standard training volume. Leave 2-3 reps in the tank on all lifts.</div>
+                </div>
+                <div class="table-row">
+                    <div class="row-name" style="color: #000; font-style: italic;">Above Baseline Average</div>
+                    <div class="row-dose-container"><div class="row-dose" style="background:#000; color:#FFF;">3 SETS</div></div>
+                    <div class="row-cue">Nervous system is fully primed. Push maximum athletic intent and velocity.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== DAILY HABITS ==================== -->
+        <div id="habits" class="tab-content">
+            <div class="session-header">
+                <div class="session-tag">Daily Compliance</div>
+                <div class="session-title">Post-Session Protocol</div>
+            </div>
+
+            <div class="block-section">
+                <div class="block-header">
+                    <h2 class="block-title">📱 1-2-3 Check-In Scale</h2>
+                </div>
+                <div class="table-header">
+                    <div>Score</div>
+                    <div>Status</div>
+                    <div>Meaning</div>
+                </div>
+                <div class="table-row">
+                    <div class="row-name" style="font-size: 24px;">1</div>
+                    <div class="row-dose-container"><div class="row-dose">OPTIMAL</div></div>
+                    <div class="row-cue">Zero joint pain. Feeling springy & fully recovered.</div>
+                </div>
+                <div class="table-row">
+                    <div class="row-name" style="font-size: 24px;">2</div>
+                    <div class="row-dose-container"><div class="row-dose">TIGHTNESS</div></div>
+                    <div class="row-cue">Mild joint tightness or heavy muscles. Standard fatigue.</div>
+                </div>
+                <div class="table-row">
+                    <div class="row-name" style="font-size: 24px;">3</div>
+                    <div class="row-dose-container"><div class="row-dose" style="border: 2px solid #000;">FLARED UP</div></div>
+                    <div class="row-cue">Flared-up joint pain. Need a profile override. Message coach immediately.</div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <footer>
+        <p>NLC Performance // Tactical Readiness System (TRS) Function Tier</p>
+    </footer>
+
+    <!-- INTERACTIVE JAVASCRIPT -->
+    <script>
+        function switchTab(tabId) {
+            const contents = document.querySelectorAll('.tab-content');
+            contents.forEach(content => content.classList.remove('active'));
+
+            const buttons = document.querySelectorAll('.tab-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+
+            const targetContent = document.getElementById(tabId);
+            if (targetContent) targetContent.classList.add('active');
+
+            event.currentTarget.classList.add('active');
+        }
+    </script>
+</body>
+</html>
